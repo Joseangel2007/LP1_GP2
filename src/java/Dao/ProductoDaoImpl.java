@@ -65,7 +65,7 @@ public class ProductoDaoImpl implements IProducto {
 
     @Override
     public boolean insert(Productos p) {
-        boolean agrg = true;
+        boolean insert = true;
         PreparedStatement st;
         String query = null;
 
@@ -80,6 +80,7 @@ public class ProductoDaoImpl implements IProducto {
             st.setInt(4, p.getStock());
 
             st.executeUpdate();
+            insert = true;
 
         } catch (Exception e) {
             System.out.println(" |ERROR| Al agregar el producto" + e.getMessage());
@@ -98,8 +99,7 @@ public class ProductoDaoImpl implements IProducto {
                 }
             }
         }
-        return agrg;
-
+        return insert;
     }
 
     @Override
