@@ -15,60 +15,91 @@ import Util.ConexionSingleton;
  *
  * @author josea
  */
-public class ProductoDaoImpl implements IProducto{
+public class ProductoDaoImpl implements IProducto {
+
     private Connection cn;
 
     @Override
     public List<Productos> lista() {
-        
-        List<Productos> lista=null;
+
+        List<Productos> lista = null;
         Productos pr;
         PreparedStatement st;
         ResultSet rs;
-        String query=null;
+        String query = null;
         try {
-            query = "SELECT id_producto,nombre,descripcion,"
-                    + " precio,stock FROM productos ";
-            
+            query = "SELECT id_producto,nombre,descripcion,precio,stock FROM productos ";
             lista = new ArrayList<>();
-            if(cn == null || cn.isClosed()){
-                System.out.println("La conexion es nula o esta cerrada");
-            }
+
             cn = ConexionSingleton.getConnection();
             st = cn.prepareStatement(query);
-            rs=st.executeQuery();
-            while(rs.next()){
-            pr = new Productos();
-            pr.setId_producto(rs.getInt("id_producto"));
-            pr.setNombre(rs.getString("nombre"));
-            pr.setDescripcion(rs.getString("descripcion"));
-            pr.setPrecio(rs.getDouble("precio"));
-            pr.setStock(rs.getInt("stock"));
-            lista.add(pr);
-            
+            rs = st.executeQuery();
+            while (rs.next()) {
+                pr = new Productos();
+                pr.setId_producto(rs.getInt("id_producto"));
+                pr.setNombre(rs.getString("nombre"));
+                pr.setDescripcion(rs.getString("descripcion"));
+                pr.setPrecio(rs.getDouble("precio"));
+                pr.setStock(rs.getInt("stock"));
+                lista.add(pr);
+
             }
-            
+
         } catch (Exception e) {
-             System.out.println("Error al listar:"+e.getMessage());
-             try {
-                 cn.rollback();
-             } catch (Exception ex) {
-             }
-             System.out.println("No se pudo listar los productos");
-        }finally{
-             if(cn!=null) {
-                 try {
-                     
-                 } catch (Exception ex) {
-                 }
-             }
-         }
+            System.out.println("Error al listar:" + e.getMessage());
+            try {
+                cn.rollback();
+            } catch (Exception ex) {
+            }
+            System.out.println("No se pudo listar los productos");
+        } finally {
+            if (cn != null) {
+                try {
+
+                } catch (Exception ex) {
+                }
+            }
+        }
         return lista;
     }
 
     @Override
     public boolean insert(Productos p) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        boolean agrg = true;
+        PreparedStatement st;
+        String query = null;
+
+        try {
+            query = "INSERT INTO productos(nombre,descripcion,precio, stock)"
+                    + " VALUES(?,?,?,?)";
+            cn = ConexionSingleton.getConnection();
+            st = cn.prepareStatement(query);
+            st.setString(1, p.getNombre());
+            st.setString(2, p.getDescripcion());
+            st.setDouble(3, p.getPrecio());
+            st.setInt(4, p.getStock());
+
+            st.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println(" |ERROR| Al agregar el producto" + e.getMessage());
+            try {
+                cn.rollback();
+            } catch (Exception ex) {
+            }
+            System.out.println(" |ERROR| No sé logró agregar al registro de productos" + e.getMessage());
+        } finally {
+            if (cn != null) {
+                try {
+
+                    cn.close();
+                } catch (Exception e) {
+                    System.out.println(" |ERROR AL CERRAR LA SESIÓN| ");
+                }
+            }
+        }
+        return agrg;
+
     }
 
     @Override
@@ -90,5 +121,5 @@ public class ProductoDaoImpl implements IProducto{
     public boolean updateStock(int id, int stock) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
 }
