@@ -19,8 +19,13 @@ public class TestProductos {
 
     public static void main(String[] args) {
         TestProductos t = new TestProductos();
-        t.listar();
-        //t.insertar();
+        //t.insertar();      
+        //t.listar();
+        //t.search();
+        //t.update();
+        //t.updateStock();
+        t.delete();
+        
 
     }
 
@@ -56,9 +61,58 @@ public class TestProductos {
 
     }
     
-    public static void actualizar(){
-        
-        
-    }
+    public static void update(){
+        Productos p = new Productos();
+        p.setNombre("Arroz Añejo");
+        p.setDescripcion("Mas agradable");
+        p.setPrecio(25.00);
+        p.setStock(20);
+        p.setImagen("/resource/img/arroz.jpg");
+        p.setId_producto(1);
+        boolean result = dao.update(p);
+        if (result) {
+            System.out.println(" Producto actualizado satisfactoriamente");
+        } else {
+            System.out.println(" Error No se pudo actualizar el producto");
 
-}
+        }
+    }
+    
+    public static void search(){
+        Productos pr = dao.SearchById(3);
+        
+        if (pr !=null) {
+            System.out.println("Producto encontrado");
+            System.out.println("ID "+pr.getId_producto());
+            System.out.println("Nombre: "+pr.getNombre());
+            System.out.println("Descripcion: "+pr.getDescripcion());
+            System.out.println("Precio: "+pr.getPrecio());
+            System.out.println("Stock: "+pr.getStock());
+            System.out.println("Ruta img"+pr.getImagen());
+        }else{
+            System.out.println("No hay registros");
+        }
+    }
+    
+    public static void delete(){
+        boolean result = dao.delete(4);
+        
+        if (result) {
+            System.out.println("Eliminado");
+        }else{
+            System.out.println("No se pudo eliminar");
+        }
+    }
+    
+    public static void updateStock(){
+        boolean result = dao.updateStock(4,200);
+        
+        if (result) {
+            System.out.println("Stock actualizado");
+        }else{
+            System.out.println("No se pudo actualizar el stock");
+        }
+    }
+    }
+    
+

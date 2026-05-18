@@ -125,21 +125,12 @@ public class ProductoDaoImpl implements IProducto {
             update = true;
 
         } catch (Exception e) {
-            System.out.println(" |ERROR| Al agregar el producto" + e.getMessage());
+            System.out.println(" ERROR al actualizar" + e.getMessage());
             try {
                 cn.rollback();
             } catch (Exception ex) {
             }
             System.out.println(" |ERROR| No sé logró agregar al registro de productos" + e.getMessage());
-        } finally {
-            if (cn != null) {
-                try {
-
-                    cn.close();
-                } catch (Exception e) {
-                    System.out.println(" |ERROR AL CERRAR LA SESIÓN| ");
-                }
-            }
         }
         return update;
         
@@ -148,17 +139,96 @@ public class ProductoDaoImpl implements IProducto {
 
     @Override
     public Productos SearchById(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Productos pr = null;
+        PreparedStatement st;
+        ResultSet rs;
+        String query = null;
+        try {
+            query = "SELECT * FROM productos WHERE id_producto=? ";
+
+            cn = ConexionSingleton.getConnection();
+            st = cn.prepareStatement(query);
+            st.setInt(1, id);
+            rs = st.executeQuery();
+            while (rs.next()) {
+                pr = new Productos();
+                pr.setId_producto(rs.getInt("id_producto"));
+                pr.setNombre(rs.getString("nombre"));
+                pr.setDescripcion(rs.getString("descripcion"));
+                pr.setPrecio(rs.getDouble("precio"));
+                pr.setStock(rs.getInt("stock"));
+                pr.setImagen(rs.getString("imagen"));
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error al buscar por ID:" + e.getMessage());
+            try {
+                cn.rollback();
+            } catch (Exception ex) {
+            }
+            System.out.println("No se pudo buscar por ID");
+        } finally {
+            if (cn != null) {
+                try {
+
+                } catch (Exception ex) {
+                }
+            }
+        }
+        return pr;
+        
     }
 
     @Override
     public boolean delete(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+        boolean flag = false;
+        PreparedStatement st;
+        String query = null;
+
+        try {
+            query = "DELETE FROM productos WHERE id_producto=?";
+            cn = ConexionSingleton.getConnection();
+            st = cn.prepareStatement(query);
+            st.setInt(1, id);
+            st.executeUpdate();
+            flag = true;
+
+        } catch (Exception e) {
+            System.out.println(" Error al eliminar" + e.getMessage());
+            try {
+                cn.rollback();
+            } catch (Exception ex) {
+            }
+            System.out.println(" Error no se pudo eliminar el producto" + e.getMessage());
+        } 
+        return flag;
+        }
 
     @Override
     public boolean updateStock(int id, int stock) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        boolean flag = false;
+        PreparedStatement st;
+        String query = null;
+
+        try {
+            query = "UPDATE productos SET stock=? WHERE id_producto=?";
+            cn = ConexionSingleton.getConnection();
+            st = cn.prepareStatement(query);
+            st.setInt(1, stock);
+            st.setInt(2, id);
+            st.executeUpdate();
+            flag = true;
+
+        } catch (Exception e) {
+            System.out.println(" |ERROR| Al agregar el producto" + e.getMessage());
+            try {
+                cn.rollback();
+            } catch (Exception ex) {
+            }
+            System.out.println(" |ERROR| No sé logró agregar al registro de productos" + e.getMessage());
+        } 
+        return flag;
+        
     }
 
 }
