@@ -56,7 +56,8 @@ public class TestProductos {
 
     }
     
-    public static void update(){
+    public static void actualizar(){
+        
         
     }
 

@@ -70,14 +70,15 @@ public class ProductoDaoImpl implements IProducto {
         String query = null;
 
         try {
-            query = "INSERT INTO productos(nombre,descripcion,precio, stock)"
-                    + " VALUES(?,?,?,?)";
+            query = "INSERT INTO productos(nombre,descripcion,precio, stock, imagen)"
+                    + " VALUES(?,?,?,?,?)";
             cn = ConexionSingleton.getConnection();
             st = cn.prepareStatement(query);
             st.setString(1, p.getNombre());
             st.setString(2, p.getDescripcion());
             st.setDouble(3, p.getPrecio());
             st.setInt(4, p.getStock());
+            st.setString(5, p.getImagen());
 
             st.executeUpdate();
             insert = true;
@@ -104,7 +105,45 @@ public class ProductoDaoImpl implements IProducto {
 
     @Override
     public boolean update(Productos p) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        boolean update = false;
+        PreparedStatement st;
+        String query = null;
+
+        try {
+            query = "UPDATE productos SET nombre=?,"
+                    + "descripcion=?,precio=?, stock=?, imagen=?"
+                    + " WHERE id_producto=?";
+            cn = ConexionSingleton.getConnection();
+            st = cn.prepareStatement(query);
+            st.setString(1, p.getNombre());
+            st.setString(2, p.getDescripcion());
+            st.setDouble(3, p.getPrecio());
+            st.setInt(4, p.getStock());
+            st.setString(5, p.getImagen());
+            st.setInt(6, p.getId_producto());
+            st.executeUpdate();
+            update = true;
+
+        } catch (Exception e) {
+            System.out.println(" |ERROR| Al agregar el producto" + e.getMessage());
+            try {
+                cn.rollback();
+            } catch (Exception ex) {
+            }
+            System.out.println(" |ERROR| No sé logró agregar al registro de productos" + e.getMessage());
+        } finally {
+            if (cn != null) {
+                try {
+
+                    cn.close();
+                } catch (Exception e) {
+                    System.out.println(" |ERROR AL CERRAR LA SESIÓN| ");
+                }
+            }
+        }
+        return update;
+        
+        
     }
 
     @Override
