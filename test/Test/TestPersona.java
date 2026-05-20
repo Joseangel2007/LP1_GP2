@@ -48,18 +48,18 @@ public class TestPersona {
             System.out.println("No se pudo realizar el registro");
         }
     }
-    
-    public void valid_user(){
+
+    public void valid_user() {
         Usuario u = Udao.validate("jose@gmail.com", "admin123");
-        if(u!=null && u.getPersona() !=null) {
-            System.out.println("Bienvenido:"+u.getPersona().getNombre());
-            System.out.println("Rol:"+u.getRol());
-            System.out.println("Usuario:"+u.getUsuario());
-            System.out.println("User_id:"+u.getId_usuario());
-            System.out.println("persona_id:"+u.getPersona().getId_persona());
-        }else{
+        if (u != null && u.getPersona() != null) {
+            System.out.println("Bienvenido:" + u.getPersona().getNombre());
+            System.out.println("Rol:" + u.getRol());
+            System.out.println("Usuario:" + u.getUsuario());
+            System.out.println("User_id:" + u.getId_usuario());
+            System.out.println("persona_id:" + u.getPersona().getId_persona());
+        } else {
             System.out.println("Credenciales incorrectas");
-            
+
         }
     }
 

@@ -133,8 +133,7 @@ public class ProductoDaoImpl implements IProducto {
             System.out.println(" |ERROR| No sé logró agregar al registro de productos" + e.getMessage());
         }
         return update;
-        
-        
+
     }
 
     @Override
@@ -176,7 +175,7 @@ public class ProductoDaoImpl implements IProducto {
             }
         }
         return pr;
-        
+
     }
 
     @Override
@@ -200,9 +199,9 @@ public class ProductoDaoImpl implements IProducto {
             } catch (Exception ex) {
             }
             System.out.println(" Error no se pudo eliminar el producto" + e.getMessage());
-        } 
-        return flag;
         }
+        return flag;
+    }
 
     @Override
     public boolean updateStock(int id, int stock) {
@@ -226,9 +225,9 @@ public class ProductoDaoImpl implements IProducto {
             } catch (Exception ex) {
             }
             System.out.println(" |ERROR| No sé logró agregar al registro de productos" + e.getMessage());
-        } 
+        }
         return flag;
-        
+
     }
 
 }

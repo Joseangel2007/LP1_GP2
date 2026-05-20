@@ -24,8 +24,7 @@ public class TestProductos {
         //t.search();
         //t.update();
         //t.updateStock();
-        t.delete();
-        
+        //t.delete();
 
     }
 
@@ -60,8 +59,8 @@ public class TestProductos {
         }
 
     }
-    
-    public static void update(){
+
+    public static void update() {
         Productos p = new Productos();
         p.setNombre("Arroz Añejo");
         p.setDescripcion("Mas agradable");
@@ -77,42 +76,40 @@ public class TestProductos {
 
         }
     }
-    
-    public static void search(){
+
+    public static void search() {
         Productos pr = dao.SearchById(3);
-        
-        if (pr !=null) {
+
+        if (pr != null) {
             System.out.println("Producto encontrado");
-            System.out.println("ID "+pr.getId_producto());
-            System.out.println("Nombre: "+pr.getNombre());
-            System.out.println("Descripcion: "+pr.getDescripcion());
-            System.out.println("Precio: "+pr.getPrecio());
-            System.out.println("Stock: "+pr.getStock());
-            System.out.println("Ruta img"+pr.getImagen());
-        }else{
+            System.out.println("ID " + pr.getId_producto());
+            System.out.println("Nombre: " + pr.getNombre());
+            System.out.println("Descripcion: " + pr.getDescripcion());
+            System.out.println("Precio: " + pr.getPrecio());
+            System.out.println("Stock: " + pr.getStock());
+            System.out.println("Ruta img" + pr.getImagen());
+        } else {
             System.out.println("No hay registros");
         }
     }
-    
-    public static void delete(){
+
+    public static void delete() {
         boolean result = dao.delete(4);
-        
+
         if (result) {
             System.out.println("Eliminado");
-        }else{
+        } else {
             System.out.println("No se pudo eliminar");
         }
     }
-    
-    public static void updateStock(){
-        boolean result = dao.updateStock(4,200);
-        
+
+    public static void updateStock() {
+        boolean result = dao.updateStock(4, 200);
+
         if (result) {
             System.out.println("Stock actualizado");
-        }else{
+        } else {
             System.out.println("No se pudo actualizar el stock");
         }
     }
-    }
-    
-
+}
