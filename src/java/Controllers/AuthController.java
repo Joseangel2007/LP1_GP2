@@ -4,6 +4,13 @@
  */
 package Controllers;
 
+import Dao.PersonaDaoImpl;
+import Dao.UsuarioDaoImpl;
+import Interfaces.IPersona;
+import Interfaces.IUsuario;
+import Model.Usuario;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,6 +18,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import static java.lang.System.out;
 
 /**
  *
@@ -18,16 +27,9 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "AuthController", urlPatterns = {"/AuthController"})
 public class AuthController extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    private final IUsuario uDao = new UsuarioDaoImpl();
+    private final IPersona pDao = new PersonaDaoImpl();
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -71,7 +73,44 @@ public class AuthController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        
+        //Forma de recoger datos de la vista
+        
+        String action = request.getParameter("action");
+        JsonObject jsonResponse = new JsonObject();
+        
+        Gson gson = new Gson();
+        try {
+            if (action.equals("validar")) {
+                String user = request.getParameter("usuario");
+                String pasw = request.getParameter("password");
+                //variable local}
+                Usuario us = uDao.validate(user, pasw);
+                
+                if (us!=null && us.getUsuario() !=null) {
+                    HttpSession sesion = request.getSession(true);
+                    sesion.setAttribute("usuario", us);
+                    
+                    jsonResponse.addProperty("sucess", true);
+                    jsonResponse.addProperty("message", "inicio de sesion exitoso");
+                    jsonResponse.add("userData", gson.toJsonTree(us));
+                }else{
+                    jsonResponse.addProperty("sucess", false);
+                    jsonResponse.addProperty("message", "Usuario o contraseña incorrectos");
+                }
+                out.print(jsonResponse.toString());
+                
+            }
+            
+        } catch (Exception e) {
+            response.setStatus(500);
+            jsonResponse.addProperty("succes", false);
+            jsonResponse.addProperty("message", "Error"+e.getMessage());
+            response.getWriter().print(jsonResponse.toString());
+        }
+        
     }
 
     /**
