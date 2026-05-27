@@ -8,6 +8,7 @@ import Dao.PersonaDaoImpl;
 import Dao.UsuarioDaoImpl;
 import Interfaces.IPersona;
 import Interfaces.IUsuario;
+import Model.Persona;
 import Model.Usuario;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -27,9 +28,10 @@ import static java.lang.System.out;
  */
 @WebServlet(name = "AuthController", urlPatterns = {"/AuthController"})
 public class AuthController extends HttpServlet {
+
     private final IUsuario uDao = new UsuarioDaoImpl();
     private final IPersona pDao = new PersonaDaoImpl();
-    
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -75,42 +77,65 @@ public class AuthController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        
+
         //Forma de recoger datos de la vista
-        
         String action = request.getParameter("action");
         JsonObject jsonResponse = new JsonObject();
-        
+
         Gson gson = new Gson();
-        try {
+        try (PrintWriter out = response.getWriter()) {
             if (action.equals("validar")) {
                 String user = request.getParameter("usuario");
                 String pasw = request.getParameter("password");
                 //variable local}
                 Usuario us = uDao.validate(user, pasw);
-                
-                if (us!=null && us.getUsuario() !=null) {
+
+                if (us != null && us.getUsuario() != null) {
                     HttpSession sesion = request.getSession(true);
                     sesion.setAttribute("usuario", us);
-                    
+
                     jsonResponse.addProperty("sucess", true);
                     jsonResponse.addProperty("message", "inicio de sesion exitoso");
                     jsonResponse.add("userData", gson.toJsonTree(us));
-                }else{
+                } else {
                     jsonResponse.addProperty("sucess", false);
                     jsonResponse.addProperty("message", "Usuario o contraseña incorrectos");
                 }
                 out.print(jsonResponse.toString());
+
+            } else if (action.equals("register")) {
+
+                Persona p = new Persona();
+                Usuario u = new Usuario();
+
+                p.setNombre(request.getParameter("nombre"));
+                p.setEmail(request.getParameter("email"));
+                p.setDireccion(request.getParameter("direccion"));
+                p.setTelefono(request.getParameter("telefono"));
+                u.setPassword(request.getParameter("password"));
+
+                int resultado = pDao.insert(p, u);
+
+                jsonResponse.addProperty("sucess", resultado!=0);
+                jsonResponse.addProperty("message",resultado!=0 ?  "Registro sucess": "Error de registro");
+                out.print(jsonResponse.toString());
+
+            }else if(action.equals("Salir")){
+                HttpSession session = request.getSession(false);
+                if (session !=null) session.invalidate(); 
+                jsonResponse.addProperty("sucess", true);
+                jsonResponse.addProperty("message","Sesion cerrada");
+                out.print(jsonResponse.toString());
                 
             }
-            
+
         } catch (Exception e) {
             response.setStatus(500);
             jsonResponse.addProperty("succes", false);
-            jsonResponse.addProperty("message", "Error"+e.getMessage());
+            jsonResponse.addProperty("message", "Error" + e.getMessage());
             response.getWriter().print(jsonResponse.toString());
         }
-        
+
     }
 
     /**
